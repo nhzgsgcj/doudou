@@ -1,5 +1,213 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>豆豆的丑照</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #f5f3ff 100%);
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 48px 16px 24px;
+  }
+  header h1 {
+    font-size: 2.4em;
+    color: #db2777;
+    letter-spacing: 4px;
+  }
+  header h1::before { content: "📷 "; }
+  header p {
+    margin-top: 10px;
+    color: #9d174d;
+    opacity: .7;
+    font-size: 1em;
+  }
+  .gallery {
+    columns: 4 220px;
+    column-gap: 14px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 20px 60px;
+  }
+  .item {
+    break-inside: avoid;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(219, 39, 119, .12);
+    cursor: zoom-in;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .item:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 8px 24px rgba(219, 39, 119, .25);
+  }
+  .item img {
+    width: 100%;
+    display: block;
+    min-height: 80px;
+    object-fit: cover;
+  }
+  /* 灯箱 */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 8px;
+    box-shadow: 0 0 40px rgba(0,0,0,.5);
+  }
+  .lb-btn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    border: none;
+    font-size: 2em;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    user-select: none;
+    transition: background .2s;
+  }
+  .lb-btn:hover { background: rgba(255,255,255,.3); }
+  .lb-prev { left: 18px; }
+  .lb-next { right: 18px; }
+  .lb-close {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2.2em;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .lb-count {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,.85);
+    font-size: .95em;
+    letter-spacing: 2px;
+  }
+  footer {
+    text-align: center;
+    padding: 0 0 36px;
+    color: #be185d;
+    opacity: .55;
+    font-size: .9em;
+  }
+</style>
+</head>
 <body>
-<h2>Hello World!你好世界！我是豆豆</h2>
+<header>
+  <h1>豆豆的丑照</h1>
+  <p>一共 23 张 &middot; 点开看大图</p>
+</header>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-btn lb-prev" onclick="step(-1)">&larr;</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb-btn lb-next" onclick="step(1)">&rarr;</button>
+  <button class="lb-close" onclick="closeLb()">&times;</button>
+  <div class="lb-count" id="lbCount"></div>
+</div>
+
+<footer>豆豆的丑照 &copy; 2026 &middot; 用爱发电</footer>
+
+<script>
+const photos = [
+  "resource/jpg/IMG_20221220_092029.jpg",
+  "resource/jpg/IMG_20230122_215209.jpg",
+  "resource/jpg/IMG_20240713_210719.jpg",
+  "resource/jpg/IMG_20251220_111019.jpg",
+  "resource/jpg/IMG_20260326_105623.jpg",
+  "resource/jpg/mmexport1630833163308.jpg",
+  "resource/jpg/mmexport1635083111776.jpg",
+  "resource/jpg/mmexport1640079407378.jpg",
+  "resource/jpg/mmexport1674302285357.jpg",
+  "resource/jpg/mmexport1674302288178.jpg",
+  "resource/jpg/mmexport1674302290029.jpg",
+  "resource/jpg/mmexport1755567784194.jpg",
+  "resource/jpg/mmexport1761823362289.jpg",
+  "resource/jpg/synthesis_df4e14a4-caa0-489b-8467-213893a9db76_i.jpg",
+  "resource/jpg/wx_camera_1630583256505.jpg",
+  "resource/jpg/wx_camera_1713361493189.jpg",
+  "resource/jpg/wx_camera_1721562574208.jpg",
+  "resource/jpg/wx_camera_1723602584733.jpg",
+  "resource/jpg/wx_camera_1723604246051.jpg",
+  "resource/jpg/wx_camera_1726366990254.jpg",
+  "resource/jpg/wx_camera_1755141865991.jpg",
+  "resource/jpg/wx_camera_1756119501920.jpg",
+  "resource/jpg/wx_camera_1782901912680.jpg"
+];
+
+const gallery = document.getElementById("gallery");
+photos.forEach((src, i) => {
+  const div = document.createElement("div");
+  div.className = "item";
+  div.onclick = () => openLb(i);
+  const img = document.createElement("img");
+  img.src = src;
+  img.loading = "lazy";
+  img.alt = "豆豆的丑照 " + (i + 1);
+  div.appendChild(img);
+  gallery.appendChild(div);
+});
+
+let cur = 0;
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const lbCount = document.getElementById("lbCount");
+
+function openLb(i) {
+  cur = i;
+  show();
+  lb.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeLb() {
+  lb.classList.remove("open");
+  document.body.style.overflow = "";
+}
+function step(d) {
+  cur = (cur + d + photos.length) % photos.length;
+  show();
+}
+function show() {
+  lbImg.src = photos[cur];
+  lbCount.textContent = (cur + 1) + " / " + photos.length;
+}
+document.addEventListener("keydown", e => {
+  if (!lb.classList.contains("open")) return;
+  if (e.key === "Escape") closeLb();
+  if (e.key === "ArrowLeft") step(-1);
+  if (e.key === "ArrowRight") step(1);
+});
+lb.addEventListener("click", e => {
+  if (e.target === lb) closeLb();
+});
+</script>
 </body>
 </html>
