@@ -161,72 +161,6 @@
   }
   .bg-upload button:hover { background: rgba(255,255,255,.18); }
 
-  /* ── 第二行：轮播 ───────────────────────────── */
-  .hero-wrap { flex: none; padding: 8px 0 4px; }
-  .hero {
-    position: relative;
-    background: #0c0f16;
-    overflow: hidden;
-    border-radius: 18px;
-    box-shadow: 0 12px 34px rgba(0,0,0,.45);
-  }
-  .hero-track { position: relative; aspect-ratio: 16 / 6.4; }
-  .slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity .7s ease;
-  }
-  .slide.on { opacity: 1; }
-  .slide img { width: 100%; height: 100%; object-fit: cover; }
-  .slide-cap {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 60px 22px 14px;
-    background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.22) 55%, transparent);
-    color: #fff;
-    font-size: 14px;
-    letter-spacing: .5px;
-  }
-  .slide-cap .date { font-size: 12px; opacity: .75; margin-right: 8px; }
-  .hero-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 64px;
-    border: none;
-    background: rgba(0,0,0,.35);
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity .25s, background .25s;
-  }
-  .hero:hover .hero-btn { opacity: 1; }
-  .hero-btn:hover { background: rgba(230,57,70,.85); }
-  .hero-prev { left: 0; border-radius: 12px 0 0 12px; }
-  .hero-next { right: 0; border-radius: 0 12px 12px 0; }
-  .hero-dots {
-    position: absolute;
-    right: 18px;
-    bottom: 14px;
-    display: flex;
-    gap: 7px;
-    z-index: 5;
-  }
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.45);
-    cursor: pointer;
-    transition: background .25s, transform .25s;
-  }
-  .dot.on { background: #fff; transform: scale(1.15); }
-
   /* ── 栏目标题 ───────────────────────────────── */
   .section-head {
     flex: none;
@@ -284,18 +218,17 @@
   .pthumb {
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
-    background: rgba(255,255,255,.9);
-    padding: 8px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
     cursor: zoom-in;
-    box-shadow: 0 10px 24px rgba(0,0,0,.34);
+    box-shadow: 0 8px 22px rgba(0,0,0,.38);
     transition: transform .3s ease, box-shadow .3s ease;
   }
   .pthumb .frame {
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 14px;
     aspect-ratio: 1 / 1;
-    background: #e8e8ee;
+    background: rgba(255,255,255,.06);
   }
   .pthumb img {
     width: 100%;
@@ -399,13 +332,11 @@
   }
 
   @media (max-width: 900px) {
-    .hero-track { aspect-ratio: 16 / 9; }
     .brand { font-size: 19px; padding-left: 12px; }
     .clock .time { font-size: 25px; }
   }
   @media (max-width: 640px) {
     .pcards { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
-    .hero-track { aspect-ratio: 4 / 3; }
     .site-meta { display: none; }
     .site-inner { gap: 10px; }
     .clock .time { font-size: 22px; }
@@ -442,16 +373,6 @@
     </div>
   </div>
 </header>
-
-<!-- 第二行：轮播（最新 5 张） -->
-<div class="hero-wrap wrap">
-  <section class="hero" id="hero">
-    <div class="hero-track" id="heroTrack"></div>
-    <button class="hero-btn hero-prev" id="heroPrev" aria-label="上一张">&lsaquo;</button>
-    <button class="hero-btn hero-next" id="heroNext" aria-label="下一张">&rsaquo;</button>
-    <div class="hero-dots" id="heroDots"></div>
-  </section>
-</div>
 
 <!-- 栏目标题 -->
 <div class="wrap section-head">
@@ -501,9 +422,6 @@ const FALLBACK_PHOTOS = [
   "resource/jpg/synthesis_df4e14a4-caa0-489b-8467-213893a9db76_i.jpg",
   "resource/jpg/wx_camera_1723602584733.jpg"
 ].map(src => ({ src: src, title: "", date: "" }));
-
-const HERO_COUNT = 5;      // 轮播展示最新 5 张
-const AUTOPLAY_MS = 5000;  // 自动切换间隔
 
 function normalize(src) {
   return String(src || "").replace(/^\/+/, "");
@@ -712,81 +630,13 @@ document.getElementById("bgReset").addEventListener("click", () => {
   cus.style.backgroundImage = "none";
 });
 
-/* ── 轮播 ── */
 let photos = [];
-let heroIndex = 0;
-let heroTimer = null;
 
 function applySite(site) {
   const s = Object.assign({}, FALLBACK_SITE, site || {});
   document.title = s.title;
   document.getElementById("siteTitle").textContent = s.title;
   document.getElementById("siteFooter").textContent = s.footer || FALLBACK_SITE.footer;
-}
-
-function buildHero(list) {
-  const track = document.getElementById("heroTrack");
-  const dots = document.getElementById("heroDots");
-  track.innerHTML = "";
-  dots.innerHTML = "";
-
-  const items = list.slice(0, HERO_COUNT);
-  if (!items.length) {
-    document.getElementById("hero").style.display = "none";
-    return;
-  }
-
-  items.forEach((p, i) => {
-    const slide = document.createElement("div");
-    slide.className = "slide" + (i === 0 ? " on" : "");
-
-    const img = document.createElement("img");
-    img.src = p.src;
-    img.alt = p.title || ("照片 " + (i + 1));
-    img.loading = i === 0 ? "eager" : "lazy";
-    slide.appendChild(img);
-
-    if (p.title || p.date) {
-      const cap = document.createElement("div");
-      cap.className = "slide-cap";
-      if (p.date) {
-        const d = document.createElement("span");
-        d.className = "date";
-        d.textContent = p.date;
-        cap.appendChild(d);
-      }
-      cap.appendChild(document.createTextNode(p.title || ""));
-      slide.appendChild(cap);
-    }
-
-    slide.addEventListener("click", () => openLb(i));
-    track.appendChild(slide);
-
-    const dot = document.createElement("div");
-    dot.className = "dot" + (i === 0 ? " on" : "");
-    dot.addEventListener("click", () => goHero(i));
-    dots.appendChild(dot);
-  });
-
-  startAuto();
-}
-
-function goHero(i) {
-  const slides = document.querySelectorAll("#heroTrack .slide");
-  const dots = document.querySelectorAll("#heroDots .dot");
-  if (!slides.length) return;
-  heroIndex = (i + slides.length) % slides.length;
-  slides.forEach((s, k) => s.classList.toggle("on", k === heroIndex));
-  dots.forEach((d, k) => d.classList.toggle("on", k === heroIndex));
-}
-
-function startAuto() {
-  stopAuto();
-  if (document.querySelectorAll("#heroTrack .slide").length < 2) return;
-  heroTimer = setInterval(() => goHero(heroIndex + 1), AUTOPLAY_MS);
-}
-function stopAuto() {
-  if (heroTimer) { clearInterval(heroTimer); heroTimer = null; }
 }
 
 /* ── 照片墙：一张图一张卡片，不分组、不加数量角标 ── */
@@ -845,11 +695,9 @@ function openLb(i) {
   cur = i;
   show();
   lb.classList.add("open");
-  stopAuto();
 }
 function closeLb() {
   lb.classList.remove("open");
-  startAuto();
 }
 function step(d) {
   if (!photos.length) return;
@@ -875,11 +723,6 @@ document.addEventListener("keydown", e => {
 });
 lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
 
-document.getElementById("heroPrev").addEventListener("click", () => { goHero(heroIndex - 1); startAuto(); });
-document.getElementById("heroNext").addEventListener("click", () => { goHero(heroIndex + 1); startAuto(); });
-document.getElementById("hero").addEventListener("mouseenter", stopAuto);
-document.getElementById("hero").addEventListener("mouseleave", startAuto);
-
 /* ── 启动 ── */
 (async function init() {
   const site = await loadJSON("data/site.json", FALLBACK_SITE);
@@ -902,7 +745,6 @@ document.getElementById("hero").addEventListener("mouseleave", startAuto);
   document.getElementById("siteMeta").textContent =
     "共 " + total + " 张照片 · 持续更新";
 
-  buildHero(photos);
   buildCards(photos);
 })();
 </script>
