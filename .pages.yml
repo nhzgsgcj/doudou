@@ -1,0 +1,56 @@
+# Pages CMS 配置（https://pagescms.org/docs/configuration/）
+# 连接方式：打开 https://app.pagescms.org → GitHub 登录 → 选择仓库 nhzgsgcj/doudou
+# 后台里改完点 Save，Pages CMS 会直接 commit 到本仓库，GitHub Pages 几十秒后自动更新。
+
+# ── 图片上传目录 ───────────────────────────────────────────────
+media:
+  input: resource/jpg # 上传的文件存到这里
+  output: /resource/jpg # 写进 JSON 的路径（index.html 会自动去掉开头的 /）
+  extensions: [jpg, jpeg, png, webp, gif]
+  rename: false # 保留原始文件名，手机/微信导出的名字不变
+  categories: [image]
+
+# ── 可编辑内容 ────────────────────────────────────────────────
+content:
+  # 页面标题、副标题、页脚
+  - name: site
+    label: 站点设置
+    type: file
+    path: data/site.json
+    format: json
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: subtitle
+        label: 副标题
+        type: string
+      - name: footer
+        label: 页脚文字
+        type: string
+
+  # 照片列表：整个 JSON 是一个数组，每一项就是一张照片
+  - name: photos
+    label: 照片
+    type: file
+    path: data/photos.json
+    format: json
+    list: true
+    view:
+      primary: src
+      sort: date
+      order: desc
+    fields:
+      - name: src
+        label: 图片
+        type: image
+        required: true
+        options:
+          extensions: [jpg, jpeg, png, webp, gif]
+      - name: title
+        label: 说明（可选）
+        type: string
+      - name: date
+        label: 拍摄日期
+        type: date
