@@ -557,6 +557,14 @@ document.getElementById("hero").addEventListener("mouseleave", startAuto);
     .filter(p => p && p.src)
     .map(p => ({ src: normalize(p.src), title: p.title || "", date: p.date || "" }));
 
+  /* 按拍摄日期倒序（后台新上传的照片会追加到列表末尾，这里统一重排） */
+  photos.sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return b.date.localeCompare(a.date);
+  });
+
   const total = photos.length;
   document.getElementById("siteMeta").textContent =
     "共 " + total + " 张照片 · 持续更新";
