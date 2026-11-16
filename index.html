@@ -108,6 +108,14 @@
     color: rgba(255,255,255,.85);
     font-size: .95em;
     letter-spacing: 2px;
+    text-align: center;
+    max-width: 90vw;
+  }
+  .empty {
+    text-align: center;
+    color: #9d174d;
+    opacity: .6;
+    padding: 60px 20px;
   }
   footer {
     text-align: center;
@@ -116,12 +124,17 @@
     opacity: .55;
     font-size: .9em;
   }
+  footer a {
+    color: inherit;
+    text-decoration: none;
+    opacity: .55;
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>豆豆的丑照</h1>
-  <p>一共 23 张 &middot; 点开看大图</p>
+  <h1 id="siteTitle">豆豆的丑照</h1>
+  <p id="siteSubtitle">点开看大图</p>
 </header>
 
 <div class="gallery" id="gallery"></div>
@@ -134,10 +147,18 @@
   <div class="lb-count" id="lbCount"></div>
 </div>
 
-<footer>豆豆的丑照 &copy; 2026 &middot; 用爱发电</footer>
+<footer id="siteFooter">豆豆的丑照 &copy; 2026 &middot; 用爱发电</footer>
 
 <script>
-const photos = [
+/* 数据来源：data/site.json 与 data/photos.json（由 Pages CMS 在网页后台维护）。
+   下面两份兜底数据只在 fetch 失败时使用（例如直接双击本地文件打开）。 */
+const FALLBACK_SITE = {
+  title: "豆豆的丑照",
+  subtitle: "点开看大图",
+  footer: "豆豆的丑照 © 2026 · 用爱发电"
+};
+
+const FALLBACK_PHOTOS = [
   "resource/jpg/IMG_20221220_092029.jpg",
   "resource/jpg/IMG_20230122_215209.jpg",
   "resource/jpg/IMG_20240713_210719.jpg",
@@ -161,25 +182,76 @@ const photos = [
   "resource/jpg/wx_camera_1755141865991.jpg",
   "resource/jpg/wx_camera_1756119501920.jpg",
   "resource/jpg/wx_camera_1782901912680.jpg"
-];
+].map(src => ({ src: src, title: "", date: "" }));
+
+/* 站点可能部署在用户主页的子路径下（/doudou/），统一转成相对路径 */
+function normalize(src) {
+  return String(src || "").replace(/^\/+/, "");
+}
+
+async function loadJSON(url, fallback) {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    return await res.json();
+  } catch (err) {
+    return fallback;
+  }
+}
+
+let photos = [];
+let cur = 0;
 
 const gallery = document.getElementById("gallery");
-photos.forEach((src, i) => {
-  const div = document.createElement("div");
-  div.className = "item";
-  div.onclick = () => openLb(i);
-  const img = document.createElement("img");
-  img.src = src;
-  img.loading = "lazy";
-  img.alt = "豆豆的丑照 " + (i + 1);
-  div.appendChild(img);
-  gallery.appendChild(div);
-});
-
-let cur = 0;
 const lb = document.getElementById("lightbox");
 const lbImg = document.getElementById("lbImg");
 const lbCount = document.getElementById("lbCount");
+
+function applySite(site) {
+  const s = Object.assign({}, FALLBACK_SITE, site || {});
+  document.title = s.title;
+  document.getElementById("siteTitle").textContent = s.title;
+  document.getElementById("siteSubtitle").textContent = s.subtitle || "";
+  const footer = document.getElementById("siteFooter");
+  footer.innerHTML = "";
+  footer.appendChild(document.createTextNode(s.footer || ""));
+}
+
+function render(list) {
+  photos = (Array.isArray(list) ? list : [])
+    .filter(p => p && p.src)
+    .map(p => ({
+      src: normalize(p.src),
+      title: p.title || "",
+      date: p.date || ""
+    }));
+
+  gallery.innerHTML = "";
+
+  if (!photos.length) {
+    const tip = document.createElement("div");
+    tip.className = "empty";
+    tip.textContent = "还没有照片，去后台添加第一张吧。";
+    gallery.appendChild(tip);
+    return;
+  }
+
+  photos.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = "item";
+    div.onclick = () => openLb(i);
+    const img = document.createElement("img");
+    img.src = p.src;
+    img.loading = i < 8 ? "eager" : "lazy";
+    img.alt = p.title || ("照片 " + (i + 1));
+    div.appendChild(img);
+    gallery.appendChild(div);
+  });
+
+  const sub = document.getElementById("siteSubtitle");
+  const base = sub.textContent || "点开看大图";
+  sub.textContent = "一共 " + photos.length + " 张 · " + base.replace(/^一共.*?·\s*/, "");
+}
 
 function openLb(i) {
   cur = i;
@@ -192,13 +264,21 @@ function closeLb() {
   document.body.style.overflow = "";
 }
 function step(d) {
+  if (!photos.length) return;
   cur = (cur + d + photos.length) % photos.length;
   show();
 }
 function show() {
-  lbImg.src = photos[cur];
-  lbCount.textContent = (cur + 1) + " / " + photos.length;
+  const p = photos[cur];
+  if (!p) return;
+  lbImg.src = p.src;
+  lbImg.alt = p.title || ("照片 " + (cur + 1));
+  let label = (cur + 1) + " / " + photos.length;
+  if (p.title) label += " · " + p.title;
+  else if (p.date) label += " · " + p.date;
+  lbCount.textContent = label;
 }
+
 document.addEventListener("keydown", e => {
   if (!lb.classList.contains("open")) return;
   if (e.key === "Escape") closeLb();
@@ -208,6 +288,14 @@ document.addEventListener("keydown", e => {
 lb.addEventListener("click", e => {
   if (e.target === lb) closeLb();
 });
+
+(async function init() {
+  const site = await loadJSON("data/site.json", FALLBACK_SITE);
+  applySite(site);
+
+  const list = await loadJSON("data/photos.json", null);
+  render(list === null ? FALLBACK_PHOTOS : list);
+})();
 </script>
 </body>
 </html>
