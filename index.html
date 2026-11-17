@@ -189,14 +189,28 @@
     border-radius: 12px;
     background: #dde7f3;
     cursor: zoom-in;
-    box-shadow: 0 6px 16px rgba(50,80,130,.14);
-    /* 无边缘效果：整张照片完全清晰 */
+    /* 静止立体姿态：轻微倾斜 + 加深投影，让卡片有浮起感 */
+    transform: rotateX(3.5deg) rotateY(-4.5deg);
+    box-shadow:
+      0 12px 26px rgba(50,80,130,.22),
+      0 4px 10px rgba(50,80,130,.14);
     opacity: 1;
     transform-style: preserve-3d;
     will-change: transform;
-    transition: transform .18s ease-out, box-shadow .3s ease;
+    transition: transform .3s ease, box-shadow .3s ease;
   }
+  /* 相邻列朝相反方向倾斜，避免整面墙朝同一边歪 */
+  .pcol:nth-child(2n) .pthumb { transform: rotateX(3.5deg) rotateY(4.5deg); }
   .pcard { perspective: 900px; }
+  /* 呼吸式浮动：整张卡片缓慢上下漂浮，错开相位更自然 */
+  .pcard { animation: pfloat 5.5s ease-in-out infinite alternate; }
+  .pcol:nth-child(2n) .pcard { animation-delay: -1.8s; }
+  .pcol:nth-child(3n) .pcard { animation-delay: -3.4s; }
+  .pcol .pcard:nth-child(2n) { animation-delay: -4.2s; }
+  @keyframes pfloat {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-5px); }
+  }
   .pthumb img {
     width: 100%;
     height: 100%;
