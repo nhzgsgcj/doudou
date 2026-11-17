@@ -191,10 +191,14 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 径向渐变透明：中心全实、边缘更早渐隐 */
+    /* 矩形四边羽化：上下左右线性渐隐，中心全实 */
     opacity: 1;
-    -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 30%, rgba(0,0,0,0) 88%);
-    mask-image: radial-gradient(115% 115% at 50% 50%, #000 30%, rgba(0,0,0,0) 88%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%),
+                        linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%),
+                linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%);
+    mask-composite: intersect;
     transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
   .pthumb img {
