@@ -58,12 +58,16 @@
     padding-left: 18px;
     border-left: 1px solid rgba(30,60,110,.16);
   }
-  .brand .mark {
-    width: 4px;
-    height: 18px;
-    background: #e63946;
-    margin-right: 9px;
-    border-radius: 2px;
+  .brand {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #1e2c44;
+    white-space: nowrap;
+    padding-left: 18px;
+    border-left: 1px solid rgba(30,60,110,.16);
   }
   .head-right {
     margin-left: auto;
@@ -326,7 +330,7 @@
       <div class="time" id="clockTime">--:--</div>
       <div class="date" id="clockDate">&nbsp;</div>
     </div>
-    <div class="brand"><span class="mark"></span><span id="siteTitle">毛孩子的日常</span></div>
+    <div class="brand"><span id="siteTitle">毛孩子的日常</span></div>
     <div class="head-right">
       <span class="site-meta" id="siteMeta"></span>
       <button class="bg-btn" id="bgBtn" aria-haspopup="true" aria-expanded="false">换背景</button>
