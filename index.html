@@ -156,35 +156,8 @@
   }
   .bg-upload button:hover { background: #f0f5fc; }
 
-  /* ── 栏目标题 ───────────────────────────────── */
-  .section-head {
-    flex: none;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 12px 0 10px;
-  }
-  .sec-title {
-    position: relative;
-    padding-left: 11px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #1e2c44;
-    letter-spacing: 1px;
-  }
-  .sec-title::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 4px;
-    bottom: 4px;
-    width: 3px;
-    background: #e63946;
-    border-radius: 2px;
-  }
-  .sec-extra { font-size: 12px; color: rgba(30,44,68,.5); }
-
   /* ── 照片墙：独立滚动区，背景铺在内容层上、随滚动移动 ── */
+  /* ── 照片墙：独立滚动区，顶部边缘渐隐 ── */
   .scrollzone {
     flex: 1;
     min-height: 0;
@@ -192,10 +165,10 @@
     overscroll-behavior: contain;
     scrollbar-width: none;          /* Firefox 隐藏 */
     -ms-overflow-style: none;       /* IE/旧 Edge 隐藏 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
   }
-  .scrollzone::-webkit-scrollbar {  /* Chrome/Edge 隐藏 */
-    display: none;
-  }
+  .scrollzone::-webkit-scrollbar { display: none; }  /* Chrome/旧 Edge 隐藏 */
 
   .cards-holder { position: relative; z-index: 1; }
 
@@ -244,7 +217,7 @@
     text-overflow: ellipsis;
   }
 
-  .empty { padding: 60px 0; text-align: center; color: rgba(35,52,80,.5); }
+  .empty { width: 100%; padding: 60px 0; text-align: center; color: rgba(35,52,80,.5); }
 
   /* ── 页脚（内容待定） ───────────────────────── */
   .site-footer {
@@ -362,12 +335,6 @@
     </div>
   </div>
 </header>
-
-<!-- 栏目标题 -->
-<div class="wrap section-head">
-  <h2 class="sec-title">照片墙</h2>
-  <span class="sec-extra" id="gridCount"></span>
-</div>
 
 <!-- 照片墙 —— 滚轮在此区域内滚动，与整页共用同一层背景 -->
 <main class="wrap scrollzone" id="scrollzone">
@@ -645,7 +612,6 @@ function buildCards(list) {
     tip.className = "empty";
     tip.textContent = "还没有照片，去后台添加第一张吧。";
     wrap.appendChild(tip);
-    document.getElementById("gridCount").textContent = "";
     return;
   }
 
@@ -683,9 +649,6 @@ function buildCards(list) {
 
     cols[i % n].appendChild(card);
   });
-
-  document.getElementById("gridCount").textContent =
-    "共 " + list.length + " 张 · 滚轮上下滚动";
 }
 
 /* 窗口宽度变化时按新列数重建 */
