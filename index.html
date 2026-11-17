@@ -83,19 +83,19 @@
     align-items: center;
     height: 34px;
     padding: 0 18px;
-    border: 1px solid rgba(255,255,255,.5);
-    border-radius: 999px;
-    background: rgba(255,255,255,.16);
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
     color: #2a3b55;
     font-size: 13px;
     letter-spacing: .5px;
     cursor: pointer;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: background .22s, border-color .22s, transform .22s;
+    transition: background .22s, transform .22s;
     font-family: inherit;
   }
-  .bg-btn:hover { background: rgba(255,255,255,.32); border-color: rgba(255,255,255,.8); transform: translateY(-1px); }
+  .bg-btn:hover { background: rgba(255,255,255,.26); transform: translateY(-1px); }
 
   /* 换背景面板 */
   .bg-panel {
@@ -193,9 +193,9 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 边缘轻微渐隐，柔化卡片轮廓 */
-    -webkit-mask-image: radial-gradient(135% 135% at 50% 50%, #000 84%, rgba(0,0,0,0) 100%);
-    mask-image: radial-gradient(135% 135% at 50% 50%, #000 84%, rgba(0,0,0,0) 100%);
+    /* 边缘渐隐，柔化卡片轮廓 */
+    -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 68%, rgba(0,0,0,0) 94%);
+    mask-image: radial-gradient(115% 115% at 50% 50%, #000 68%, rgba(0,0,0,0) 94%);
   }
   .pthumb img {
     width: 100%;
