@@ -191,13 +191,13 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 四边半透明 + 柔和过渡：外圈 42% 透明带，向中心短距柔和过渡 */
+    /* 四边半透明 + 柔和过渡：外圈 42% 透明带，向中心短距柔和过渡（窄过渡区） */
     opacity: 1;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 13%, #000 87%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
-                        linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 13%, #000 87%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 9%, #000 91%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
+                        linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 9%, #000 91%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
     -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 13%, #000 87%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
-                linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 13%, #000 87%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 9%, #000 91%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
+                linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 9%, #000 91%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
     mask-composite: intersect;
     transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
