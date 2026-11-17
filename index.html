@@ -196,15 +196,14 @@
       0 5px 12px rgba(50,80,130,.16);
     opacity: 1;
     transform-style: preserve-3d;
-    will-change: transform;
     transition: transform .3s ease, box-shadow .3s ease;
   }
   .pcard { perspective: 900px; }
-  /* 呼吸式浮动：整张卡片缓慢上下漂浮，错开相位更自然 */
-  .pcard { animation: pfloat 5.5s ease-in-out infinite alternate; }
-  .pcol:nth-child(2n) .pcard { animation-delay: -1.8s; }
-  .pcol:nth-child(3n) .pcard { animation-delay: -3.4s; }
-  .pcol .pcard:nth-child(2n) { animation-delay: -4.2s; }
+  /* 呼吸式浮动：整列一起浮动（4-5 个动画图层，比逐卡动画省一个数量级的 GPU 开销） */
+  .pcol { animation: pfloat 5.5s ease-in-out infinite alternate; }
+  .pcol:nth-child(2n) { animation-delay: -1.8s; }
+  .pcol:nth-child(3n) { animation-delay: -3.4s; }
+  .pcol:nth-child(4n) { animation-delay: -4.2s; }
   @keyframes pfloat {
     from { transform: translateY(0); }
     to   { transform: translateY(-5px); }
@@ -353,7 +352,7 @@
 <!-- 页脚 -->
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <div id="siteFooter">@//lldddd/</div>
+    <div id="siteFooter">@lldddd</div>
   </div>
 </footer>
 
@@ -371,7 +370,7 @@
 const FALLBACK_SITE = {
   title: "毛孩子的日常",
   subtitle: "",
-  footer: "@//lldddd/"
+  footer: "@lldddd"
 };
 
 const FALLBACK_PHOTOS = [
@@ -648,10 +647,16 @@ function buildCards(list) {
     });
     thumb.addEventListener("mouseleave", () => { thumb.style.transform = ""; });
 
+    /* 网格加载缩略图（webp），缩略图缺失时回退原图 */
+    const base = p.src.split("/").pop().replace(/\.[^.]+$/, "");
+    const thumbSrc = "/resource/thumbs/" + base + ".webp";
     const img = document.createElement("img");
-    img.src = p.src;
+    img.src = thumbSrc;
     img.alt = p.title || ("照片 " + (i + 1));
     img.loading = i < 10 ? "eager" : "lazy";
+    img.onerror = function () {
+      if (img.src.indexOf("/resource/thumbs/") !== -1) img.src = p.src;
+    };
     thumb.appendChild(img);
     card.appendChild(thumb);
 
