@@ -16,7 +16,10 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: #e9f1fb;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    transition: background .4s ease;
   }
   img { display: block; }
   a { color: inherit; text-decoration: none; }
@@ -198,15 +201,6 @@
   .scrollzone::-webkit-scrollbar-thumb:hover { background: rgba(60,90,140,.45); }
   .scrollzone::-webkit-scrollbar-track { background: transparent; }
 
-  /* 背景画布：铺满整个滚动内容高度，随内容一起滚动 */
-  .bg-canvas { position: relative; min-height: 100%; }
-  .bg-fill {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background-position: center;
-    transition: background .4s ease;
-  }
   .cards-holder { position: relative; z-index: 1; }
 
   /* 瀑布流：JS 分列，卡片比例错落 */
@@ -379,13 +373,10 @@
   <span class="sec-extra" id="gridCount"></span>
 </div>
 
-<!-- 照片墙 —— 滚轮在此区域内滚动，背景随内容同步移动 -->
+<!-- 照片墙 —— 滚轮在此区域内滚动，与整页共用同一层背景 -->
 <main class="wrap scrollzone" id="scrollzone">
-  <div class="bg-canvas">
-    <div class="bg-fill" id="bgFill"></div>
-    <div class="cards-holder">
-      <div class="pcards" id="cards"></div>
-    </div>
+  <div class="cards-holder">
+    <div class="pcards" id="cards"></div>
   </div>
 </main>
 
@@ -504,18 +495,17 @@ const BG_PRESETS = [
 
 const BG_KEY = "doudou_bg";
 const BG_IMG_KEY = "doudou_bg_img";
-const bgFill = document.getElementById("bgFill");
 
 function applyPreset(preset) {
-  bgFill.style.backgroundImage = preset.css;
-  bgFill.style.backgroundSize = "auto";
+  document.body.style.backgroundImage = preset.css;
+  document.body.style.backgroundSize = "cover";
   markSwatch(preset.id);
 }
 function applyCustomImage(dataUrl) {
   /* 浅色蒙版保证深色文字可读，同时保留图片色调 */
-  bgFill.style.backgroundImage =
+  document.body.style.backgroundImage =
     "linear-gradient(rgba(247,250,254,.45), rgba(247,250,254,.45)), url('" + dataUrl + "')";
-  bgFill.style.backgroundSize = "cover";
+  document.body.style.backgroundSize = "cover";
   markSwatch("custom");
 }
 function markSwatch(id) {
