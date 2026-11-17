@@ -189,18 +189,15 @@
     border-radius: 12px;
     background: #dde7f3;
     cursor: zoom-in;
-    /* 静止立体姿态：轻微倾斜 + 加深投影，让卡片有浮起感 */
-    transform: rotateX(3.5deg) rotateY(-4.5deg);
+    /* 静止立体感：不倾斜，靠双层柔和投影营造浮起效果 */
     box-shadow:
-      0 12px 26px rgba(50,80,130,.22),
-      0 4px 10px rgba(50,80,130,.14);
+      0 14px 30px rgba(50,80,130,.26),
+      0 5px 12px rgba(50,80,130,.16);
     opacity: 1;
     transform-style: preserve-3d;
     will-change: transform;
     transition: transform .3s ease, box-shadow .3s ease;
   }
-  /* 相邻列朝相反方向倾斜，避免整面墙朝同一边歪 */
-  .pcol:nth-child(2n) .pthumb { transform: rotateX(3.5deg) rotateY(4.5deg); }
   .pcard { perspective: 900px; }
   /* 呼吸式浮动：整张卡片缓慢上下漂浮，错开相位更自然 */
   .pcard { animation: pfloat 5.5s ease-in-out infinite alternate; }
