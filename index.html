@@ -191,13 +191,13 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 矩形四边羽化（窄）：上下左右线性渐隐，中心全实 */
+    /* 矩形四边羽化（极窄）：上下左右线性渐隐，中心全实 */
     opacity: 1;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%),
-                        linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%),
+                        linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
     -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%),
-                linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 4%, #000 96%, transparent 100%),
+                linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
     mask-composite: intersect;
     transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
