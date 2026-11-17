@@ -190,16 +190,12 @@
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(60,90,140,.3) transparent;
+    scrollbar-width: none;          /* Firefox 隐藏 */
+    -ms-overflow-style: none;       /* IE/旧 Edge 隐藏 */
   }
-  .scrollzone::-webkit-scrollbar { width: 8px; }
-  .scrollzone::-webkit-scrollbar-thumb {
-    background: rgba(60,90,140,.3);
-    border-radius: 8px;
+  .scrollzone::-webkit-scrollbar {  /* Chrome/Edge 隐藏 */
+    display: none;
   }
-  .scrollzone::-webkit-scrollbar-thumb:hover { background: rgba(60,90,140,.45); }
-  .scrollzone::-webkit-scrollbar-track { background: transparent; }
 
   .cards-holder { position: relative; z-index: 1; }
 
