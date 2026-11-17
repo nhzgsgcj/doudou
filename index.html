@@ -191,14 +191,8 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 四边半透明 + 柔和过渡：外圈 42% 透明带，向中心极短过渡 */
+    /* 无边缘效果：整张照片完全清晰 */
     opacity: 1;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 7%, #000 93%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
-                        linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 7%, #000 93%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 7%, #000 93%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%),
-                linear-gradient(to right, rgba(0,0,0,.42) 0, rgba(0,0,0,.42) 5%, #000 7%, #000 93%, rgba(0,0,0,.42) 95%, rgba(0,0,0,.42) 100%);
-    mask-composite: intersect;
     transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
   .pthumb img {
@@ -208,9 +202,6 @@
     transition: transform .55s cubic-bezier(.2,.6,.3,1), filter .4s ease;
   }
   .pcard:hover .pthumb {
-    /* 悬停时取消羽化，边缘恢复清晰 */
-    -webkit-mask-image: none;
-    mask-image: none;
     transform: translateY(-3px);
     box-shadow: 0 12px 26px rgba(50,80,130,.24);
   }
