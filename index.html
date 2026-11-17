@@ -81,22 +81,21 @@
   .bg-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
     height: 34px;
-    padding: 0 16px;
-    border: 1px solid rgba(30,60,110,.2);
+    padding: 0 18px;
+    border: 1px solid rgba(255,255,255,.5);
     border-radius: 999px;
-    background: rgba(255,255,255,.75);
+    background: rgba(255,255,255,.16);
     color: #2a3b55;
     font-size: 13px;
     letter-spacing: .5px;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(40,70,120,.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     transition: background .22s, border-color .22s, transform .22s;
     font-family: inherit;
   }
-  .bg-btn:hover { background: #fff; border-color: rgba(30,60,110,.4); transform: translateY(-1px); }
-  .bg-btn .ico { font-size: 14px; line-height: 1; }
+  .bg-btn:hover { background: rgba(255,255,255,.32); border-color: rgba(255,255,255,.8); transform: translateY(-1px); }
 
   /* 换背景面板 */
   .bg-panel {
@@ -194,6 +193,9 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
+    /* 边缘轻微渐隐，柔化卡片轮廓 */
+    -webkit-mask-image: radial-gradient(135% 135% at 50% 50%, #000 84%, rgba(0,0,0,0) 100%);
+    mask-image: radial-gradient(135% 135% at 50% 50%, #000 84%, rgba(0,0,0,0) 100%);
   }
   .pthumb img {
     width: 100%;
@@ -321,9 +323,7 @@
     <div class="brand"><span class="mark"></span><span id="siteTitle">毛孩子的日常</span></div>
     <div class="head-right">
       <span class="site-meta" id="siteMeta"></span>
-      <button class="bg-btn" id="bgBtn" aria-haspopup="true" aria-expanded="false">
-        <span class="ico">&#127912;</span>换背景
-      </button>
+      <button class="bg-btn" id="bgBtn" aria-haspopup="true" aria-expanded="false">换背景</button>
       <div class="bg-panel" id="bgPanel">
         <h4>选择背景</h4>
         <div class="swatches" id="swatches"></div>
