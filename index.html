@@ -85,17 +85,15 @@
     padding: 0 18px;
     border: none;
     border-radius: 10px;
-    background: rgba(255,255,255,.1);
+    background: transparent;
     color: #2a3b55;
     font-size: 13px;
     letter-spacing: .5px;
     cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     transition: background .22s, transform .22s;
     font-family: inherit;
   }
-  .bg-btn:hover { background: rgba(255,255,255,.26); transform: translateY(-1px); }
+  .bg-btn:hover { background: rgba(255,255,255,.3); transform: translateY(-1px); }
 
   /* 换背景面板 */
   .bg-panel {
@@ -193,9 +191,9 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 边缘渐隐，柔化卡片轮廓 */
-    -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 68%, rgba(0,0,0,0) 94%);
-    mask-image: radial-gradient(115% 115% at 50% 50%, #000 68%, rgba(0,0,0,0) 94%);
+    /* 平时半透明，悬停变不透明 */
+    opacity: .55;
+    transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
   .pthumb img {
     width: 100%;
@@ -204,6 +202,7 @@
     transition: transform .55s cubic-bezier(.2,.6,.3,1), filter .4s ease;
   }
   .pcard:hover .pthumb {
+    opacity: 1;
     transform: translateY(-3px);
     box-shadow: 0 12px 26px rgba(50,80,130,.24);
   }
