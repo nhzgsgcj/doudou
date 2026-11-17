@@ -191,10 +191,10 @@
     cursor: zoom-in;
     box-shadow: 0 6px 16px rgba(50,80,130,.14);
     transition: transform .3s ease, box-shadow .3s ease;
-    /* 径向渐变透明：中心更实、边缘较早渐隐 */
-    opacity: .88;
-    -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 38%, rgba(0,0,0,0) 90%);
-    mask-image: radial-gradient(115% 115% at 50% 50%, #000 38%, rgba(0,0,0,0) 90%);
+    /* 径向渐变透明：中心全实、边缘更早渐隐 */
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 30%, rgba(0,0,0,0) 88%);
+    mask-image: radial-gradient(115% 115% at 50% 50%, #000 30%, rgba(0,0,0,0) 88%);
     transition: transform .3s ease, box-shadow .3s ease, opacity .3s ease;
   }
   .pthumb img {
