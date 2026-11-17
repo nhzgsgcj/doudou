@@ -235,7 +235,7 @@
   .site-footer {
     flex: none;
     border-top: 1px solid rgba(30,60,110,.1);
-    background: rgba(255,255,255,.6);
+    background: transparent;
     padding: 16px 0 18px;
     color: rgba(40,58,88,.55);
     font-size: 12px;
@@ -356,7 +356,7 @@
 <!-- 页脚（位置保留，内容后续替换） -->
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <div id="siteFooter">页脚区域 · 内容待补充</div>
+    <div id="siteFooter">@//lldddd/</div>
     <div class="footer-links">
       <span>栏目一</span><span>栏目二</span><span>栏目三</span>
     </div>
@@ -377,7 +377,7 @@
 const FALLBACK_SITE = {
   title: "毛孩子的日常",
   subtitle: "",
-  footer: "页脚区域 · 内容待补充"
+  footer: "@//lldddd/"
 };
 
 const FALLBACK_PHOTOS = [
@@ -736,7 +736,7 @@ lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
 
   const total = photos.length;
   document.getElementById("siteMeta").textContent =
-    "共 " + total + " 张照片 · 持续更新";
+    "共 " + total + " 张照片";
 
   buildCards(photos);
 })();
