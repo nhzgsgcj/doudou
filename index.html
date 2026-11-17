@@ -162,8 +162,9 @@
     overscroll-behavior: contain;
     scrollbar-width: none;          /* Firefox 隐藏 */
     -ms-overflow-style: none;       /* IE/旧 Edge 隐藏 */
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
-    mask-image: linear-gradient(to bottom, transparent 0, #000 44px);
+    /* 顶部与底部各一道渐隐：上缘参考标题区下缘的柔和过渡，底部照片渐隐融入页脚 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 44px, #000 calc(100% - 52px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 44px, #000 calc(100% - 52px), transparent 100%);
   }
   .scrollzone::-webkit-scrollbar { display: none; }  /* Chrome/旧 Edge 隐藏 */
 
@@ -234,7 +235,6 @@
   /* ── 页脚（内容待定） ───────────────────────── */
   .site-footer {
     flex: none;
-    border-top: 1px solid rgba(30,60,110,.1);
     background: transparent;
     padding: 16px 0 18px;
     color: rgba(40,58,88,.55);
@@ -245,10 +245,7 @@
     flex-wrap: wrap;
     gap: 10px 24px;
     align-items: center;
-    justify-content: space-between;
   }
-  .footer-links { display: flex; gap: 18px; }
-  .footer-links span { color: rgba(40,58,88,.35); }
 
   /* ── 看大图 ─────────────────────────────────── */
   .lightbox {
@@ -353,13 +350,10 @@
   </div>
 </main>
 
-<!-- 页脚（位置保留，内容后续替换） -->
+<!-- 页脚 -->
 <footer class="site-footer">
   <div class="wrap footer-inner">
     <div id="siteFooter">@//lldddd/</div>
-    <div class="footer-links">
-      <span>栏目一</span><span>栏目二</span><span>栏目三</span>
-    </div>
   </div>
 </footer>
 
