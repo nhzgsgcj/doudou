@@ -651,7 +651,7 @@ function buildCards(list) {
     });
     thumb.addEventListener("mouseleave", () => { thumb.style.transform = ""; });
 
-    /* 网格加载缩略图（webp），缩略图缺失时回退原图 */
+    /* 网格加载缩略图（webp）；网络波动导致失败时自动重试，仍失败再回退原图重试 */
     const base = p.src.split("/").pop().replace(/\.[^.]+$/, "");
     const thumbSrc = "/resource/thumbs/" + base + ".webp";
     const img = document.createElement("img");
@@ -659,7 +659,12 @@ function buildCards(list) {
     img.alt = p.title || ("照片 " + (i + 1));
     img.loading = i < 10 ? "eager" : "lazy";
     img.onerror = function () {
-      if (img.src.indexOf("/resource/thumbs/") !== -1) img.src = p.src;
+      /* tries: 0-2 重试缩略图，3 起回退原图并再重试两次 */
+      img._tries = (img._tries || 0) + 1;
+      const t = img._tries;
+      if (t <= 2) img.src = thumbSrc + "?r=" + t;
+      else if (t === 3) img.src = p.src;
+      else if (t <= 5) img.src = p.src + "?r=" + t;
     };
     thumb.appendChild(img);
     card.appendChild(thumb);
