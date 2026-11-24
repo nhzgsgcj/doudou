@@ -1,0 +1,4 @@
+{
+  "secret_key": "请用 python -c \"import secrets; print(secrets.token_hex(32))\" 生成替换",
+  "password_hash": "salt$hex，生成方式：见下方说明"
+}
