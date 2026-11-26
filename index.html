@@ -653,7 +653,7 @@ function buildCards(list) {
 
     /* 网格加载缩略图（webp）；网络波动导致失败时自动重试，仍失败再回退原图重试 */
     const base = p.src.split("/").pop().replace(/\.[^.]+$/, "");
-    const thumbSrc = "/resource/thumbs/" + base + ".webp";
+    const thumbSrc = "/resource/thumbs/" + base + ".webp?v=2";
     const img = document.createElement("img");
     img.src = thumbSrc;
     img.alt = p.title || ("照片 " + (i + 1));
@@ -662,7 +662,7 @@ function buildCards(list) {
       /* tries: 0-2 重试缩略图，3 起回退原图并再重试两次 */
       img._tries = (img._tries || 0) + 1;
       const t = img._tries;
-      if (t <= 2) img.src = thumbSrc + "?r=" + t;
+      if (t <= 2) img.src = thumbSrc + "&r=" + t;
       else if (t === 3) img.src = p.src;
       else if (t <= 5) img.src = p.src + "?r=" + t;
     };
@@ -705,10 +705,36 @@ function step(d) {
   cur = (cur + d + photos.length) % photos.length;
   show();
 }
+let showSeq = 0;
 function show() {
   const p = photos[cur];
   if (!p) return;
-  lbImg.src = p.src;
+  const seq = ++showSeq;
+  /* 先用 35KB 缩略图秒显，1600px 预览图加载完成后再无缝替换；缺图则回退原图 */
+  const base = p.src.split("/").pop().replace(/\.[^.]+$/, "");
+  const thumbSrc = "/resource/thumbs/" + base + ".webp?v=2";
+  const previewSrc = "/resource/previews/" + base + ".webp?v=2";
+  lbImg.onerror = function () {
+    lbImg.onerror = null;
+    lbImg.src = p.src;
+  };
+  lbImg.src = thumbSrc;
+  const hi = new Image();
+  hi.onload = function () {
+    if (seq !== showSeq) return;      /* 已切到别的照片，丢弃这次结果 */
+    lbImg.src = previewSrc;
+    /* 当前图就绪后再预加载下一张，避免抢带宽 */
+    const q = photos[(cur + 1) % photos.length];
+    if (q) {
+      const b = q.src.split("/").pop().replace(/\.[^.]+$/, "");
+      new Image().src = "/resource/previews/" + b + ".webp?v=2";
+    }
+  };
+  hi.onerror = function () {
+    if (seq !== showSeq) return;
+    lbImg.src = p.src;                /* 预览缺失 → 原图 */
+  };
+  hi.src = previewSrc;
   lbImg.alt = p.title || ("照片 " + (cur + 1));
   let label = (cur + 1) + " / " + photos.length;
   if (p.title) label += " · " + p.title;
