@@ -17,15 +17,12 @@ BASE = "/var/www/doudou"
 PHOTOS_JSON = os.path.join(BASE, "data", "photos.json")
 JPG_DIR = os.path.join(BASE, "resource", "jpg")
 THUMB_DIR = os.path.join(BASE, "resource", "thumbs")
-PREVIEW_DIR = os.path.join(BASE, "resource", "previews")
 CONF = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".heic", ".heif"}
 MAX_FILE = 30 * 1024 * 1024  # 单文件 30MB
-THUMB_MAX = 900              # 缩略图最长边（适配小带宽）
-THUMB_Q = 75
-PREVIEW_MAX = 1600           # 弹窗预览图最长边（适配小带宽）
-PREVIEW_Q = 72
+THUMB_MAX = 1280             # 缩略图最长边
+THUMB_Q = 82
 
 with open(CONF, "r", encoding="utf-8") as f:
     _cfg = json.load(f)
@@ -110,15 +107,6 @@ def make_thumb(im: Image.Image, out_path: str):
     im.save(out_path, "WEBP", quality=THUMB_Q, method=4)
 
 
-def make_preview(im: Image.Image, out_path: str):
-    """弹窗预览图：1920px WebP，体积约为原图的 1/6，秒开"""
-    im = ImageOps.exif_transpose(im)
-    if im.mode not in ("RGB", "RGBA"):
-        im = im.convert("RGB")
-    im.thumbnail((PREVIEW_MAX, PREVIEW_MAX), Image.LANCZOS)
-    im.save(out_path, "WEBP", quality=PREVIEW_Q, method=4)
-
-
 def unique_name(ext: str) -> str:
     t = time.strftime("%Y%m%d_%H%M%S")
     return "%s_%s%s" % (t, secrets.token_hex(2), ext)
@@ -199,10 +187,8 @@ def upload():
             name = unique_name(".jpg")
             os.makedirs(JPG_DIR, exist_ok=True)
             os.makedirs(THUMB_DIR, exist_ok=True)
-            os.makedirs(PREVIEW_DIR, exist_ok=True)
             im0.save(os.path.join(JPG_DIR, name), "JPEG", quality=90)
             make_thumb(im0, os.path.join(THUMB_DIR, os.path.splitext(name)[0] + ".webp"))
-            make_preview(im0, os.path.join(PREVIEW_DIR, os.path.splitext(name)[0] + ".webp"))
             entry = {"src": "/resource/jpg/" + name, "title": today, "date": today}
             data.insert(0, entry)
             added.append(entry)
@@ -228,8 +214,7 @@ def delete():
     name = os.path.basename(src)
     stem = os.path.splitext(name)[0]
     for p in (os.path.join(JPG_DIR, name),
-              os.path.join(THUMB_DIR, stem + ".webp"),
-              os.path.join(PREVIEW_DIR, stem + ".webp")):
+              os.path.join(THUMB_DIR, stem + ".webp")):
         try:
             if os.path.exists(p):
                 os.remove(p)
